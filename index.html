@@ -1,0 +1,1016 @@
+<html lang="vi" style="margin:0;padding:0;">
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Mali:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap&subset=vietnamese,latin-ext" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<div style="background-color:transparent;box-sizing:border-box;">
+  <div id="game-wrapper" style="position:relative;width:100%;height:680px;border-radius:20px;overflow:hidden;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);">
+    <div id="game-container" style="position:absolute;inset:0;width:100%;height:100%;background:#bae6fd;user-select:none;overflow:hidden;">
+      <div id="canvas3d" style="width:100%;height:100%"></div>
+
+      <button id="settings-btn" style="position:absolute;top:16px;right:16px;z-index:40;background:rgba(255,255,255,0.9);backdrop-filter:blur(8px);border:1px solid #e2e8f0;width:48px;height:48px;border-radius:50%;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s;" title="Cài đặt">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+
+      <div style="position:absolute;top:16px;left:16px;z-index:30;display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.9);backdrop-filter:blur(8px);border:1px solid #e2e8f0;padding:8px 16px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+          <div><span style="font-size:10px;color:#64748b;display:block;text-transform:uppercase;font-weight:700;line-height:1;">Điểm</span><span id="score" style="font-weight:900;font-size:20px;color:#16a34a;">0</span></div>
+          <div style="height:24px;width:1px;background:#cbd5e1;"></div>
+          <div><span style="font-size:10px;color:#64748b;display:block;text-transform:uppercase;font-weight:700;line-height:1;">Chó cách</span><span id="dog-dist-val" style="font-weight:900;font-size:18px;color:#ea580c;">14.0m</span></div>
+          <div style="height:24px;width:1px;background:#cbd5e1;"></div>
+          <div><span style="font-size:10px;color:#64748b;display:block;text-transform:uppercase;font-weight:700;line-height:1;">Tốc độ</span><span id="speed" style="font-weight:900;font-size:18px;color:#d97706;">1.0x</span></div>
+        </div>
+        <div id="voice-status" style="width:max-content;font-size:12px;padding:6px 12px;border-radius:8px;font-weight:600;background:rgba(255,255,255,0.8);border:1px solid #e2e8f0;display:flex;align-items:center;gap:8px;">
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#94a3b8;"></span><span>Mic chờ</span>
+        </div>
+      </div>
+
+      <div id="letter-overlay" style="position:absolute;top:80px;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none;display:none;z-index:30;">
+        <div style="display:inline-block;background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);padding:16px 32px;border-radius:24px;border:4px solid #22c55e;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);">
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.1em;font-weight:700;color:#64748b;margin-bottom:4px;">Đọc to chữ này:</div>
+          <div id="current-letter" class="handwriting pulse" style="font-size:120px;font-weight:700;color:#15803d;line-height:1;text-shadow:0 2px 4px rgba(0,0,0,0.1);">a</div>
+          <div style="margin-top:8px;font-size:14px;color:#334155;background:#fffbeb;padding:4px 12px;border-radius:8px;border:1px solid #fde68a;">
+            <span style="color:#92400e;font-weight:600;">Gợi ý: </span><span id="letter-hint" style="font-weight:700;color:#78350f;">a</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="danger-indicator" style="position:absolute;left:50%;bottom:32px;transform:translateX(-50%);padding:12px 24px;border-radius:16px;font-weight:700;font-size:16px;display:none;z-index:30;background:rgba(220,38,38,0.9);backdrop-filter:blur(8px);color:#fff;box-shadow:0 0 20px rgba(220,38,38,0.6);border:2px solid #f87171;align-items:center;gap:8px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span>ĐÀN CHÓ ĐANG ÁP SÁT!</span>
+      </div>
+
+      <div id="start-screen" style="position:absolute;inset:0;background:rgba(15,23,42,0.85);backdrop-filter:blur(12px);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:50;color:#fff;padding:24px;text-align:center;">
+        <div style="font-size:48px;margin-bottom:16px;letter-spacing:8px;">
+          <svg width="48" height="48" viewBox="0 0 64 64" fill="none" style="display:inline-block;vertical-align:middle;"><ellipse cx="32" cy="40" rx="20" ry="12" fill="#d97706"/><circle cx="48" cy="32" r="10" fill="#d97706"/><ellipse cx="52" cy="36" rx="4" ry="3" fill="#271911"/><circle cx="50" cy="28" r="2" fill="#0f172a"/><ellipse cx="44" cy="24" rx="4" ry="6" fill="#92400e"/><path d="M12 40 Q8 36 14 34" stroke="#92400e" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+          <svg width="48" height="48" viewBox="0 0 64 64" fill="none" style="display:inline-block;vertical-align:middle;margin:0 8px;"><circle cx="32" cy="20" r="12" fill="#fde047"/><rect x="24" y="28" width="16" height="20" rx="4" fill="#0284c7"/><rect x="20" y="48" width="8" height="12" rx="2" fill="#1e3a8a"/><rect x="36" y="48" width="8" height="12" rx="2" fill="#1e3a8a"/></svg>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#e0f2fe" stroke-width="2.5" stroke-linecap="round" style="display:inline-block;vertical-align:middle;"><path d="M3 12c3-6 15-6 18 0"/><path d="M3 17c3-6 15-6 18 0"/><path d="M3 7c3-6 15-6 18 0"/></svg>
+        </div>
+        <h2 class="handwriting" style="font-size:56px;color:#4ade80;font-weight:700;margin-bottom:12px;text-shadow:0 4px 12px rgba(0,0,0,0.3);line-height:1.1;">Chạy Nhanh<br>Học Chữ!</h2>
+        <p style="color:#e2e8f0;max-width:400px;font-size:14px;line-height:1.6;margin-bottom:32px;font-family:'Fredoka',sans-serif;">
+          Đàn chó đang đuổi theo phía sau! Khi gặp chướng ngại vật, hãy <strong>đọc to chữ thường</strong> trên màn hình. Nếu đọc chậm, đàn chó sẽ đè lấy và liếm mặt bạn!
+        </p>
+        <button id="start-btn" style="padding:16px 48px;border-radius:16px;font-weight:700;font-size:20px;cursor:pointer;transition:all 0.15s;border:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#16a34a 0%,#15803d 100%);color:#fff;box-shadow:0 10px 30px rgba(22,163,74,0.4);font-family:'Fredoka',sans-serif;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><polygon points="5,3 19,12 5,21"/></svg>
+          <span>BẮT ĐẦU CHƠI</span>
+        </button>
+      </div>
+
+      <div id="settings-modal" style="position:absolute;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:50;padding:16px;">
+        <div style="background:#fff;width:100%;max-width:600px;border-radius:24px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);overflow:hidden;display:flex;flex-direction:column;max-height:90%;">
+          <div style="padding:16px 24px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;background:#f8fafc;">
+            <h2 style="font-size:24px;font-weight:700;color:#1e293b;font-family:'Fredoka',sans-serif;">Cài đặt & Hướng dẫn</h2>
+            <button id="close-settings-btn" style="color:#94a3b8;font-size:32px;line-height:1;cursor:pointer;background:none;border:none;transition:color 0.15s;" onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#94a3b8'">&times;</button>
+          </div>
+          <div style="padding:24px;overflow-y:auto;flex:1;" class="custom-scroll">
+            <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:24px;">
+              <button id="mic-btn" style="flex:1;padding:12px 20px;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.15s;border:1.5px solid rgba(15,23,42,0.08);background:#fff;color:#0f172a;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:'Fredoka',sans-serif;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                <span>Cấp quyền Micro thủ công</span>
+              </button>
+              <button id="resume-btn" style="flex:1;padding:12px 20px;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;transition:all 0.15s;border:none;background:linear-gradient(135deg,#16a34a 0%,#15803d 100%);color:#fff;display:none;align-items:center;justify-content:center;gap:8px;font-family:'Fredoka',sans-serif;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><polygon points="5,3 19,12 5,21"/></svg>
+                <span>Tiếp tục chơi</span>
+              </button>
+            </div>
+            <div style="margin-bottom:24px;">
+              <h3 style="font-weight:700;font-size:18px;color:#15803d;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #e2e8f0;font-family:'Fredoka',sans-serif;">Cách chơi</h3>
+              <ul style="list-style:disc;list-style-position:inside;gap:4px;display:flex;flex-direction:column;font-size:14px;color:#475569;font-family:'Fredoka',sans-serif;">
+                <li>Cho phép dùng Micro khi trình duyệt hỏi.</li>
+                <li>Đọc to theo tên chữ hoặc âm tiết (VD: 'b' có thể đọc là 'bờ' hoặc 'bê').</li>
+                <li>Nhân vật sẽ <strong>tự động nhảy</strong> ngay khi bạn đọc đúng chữ!</li>
+                <li>Phím <kbd style="padding:2px 6px;background:#e2e8f0;border-radius:4px;font-family:monospace;font-size:12px;">Space</kbd> nhảy thủ công, <kbd style="padding:2px 6px;background:#e2e8f0;border-radius:4px;font-family:monospace;font-size:12px;">P</kbd> tạm dừng.</li>
+              </ul>
+            </div>
+            <div>
+              <h3 style="font-weight:700;font-size:18px;color:#15803d;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid #e2e8f0;font-family:'Fredoka',sans-serif;">Bảng chữ cái & Âm ghép</h3>
+              <div id="letters-guide" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+              <div id="compounds-guide" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:12px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="gameover-screen" style="position:absolute;inset:0;background:rgba(2,6,23,0.9);backdrop-filter:blur(12px);display:none;flex-direction:column;align-items:center;justify-content:center;z-index:50;color:#fff;padding:24px;text-align:center;">
+        <div class="pounce-in" style="max-width:400px;width:100%;background:#fff;color:#0f172a;border-radius:24px;padding:24px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.5);border:4px solid #fb923c;position:relative;overflow:hidden;margin-bottom:16px;z-index:50;">
+          <div class="lick-anim" style="font-size:64px;margin-bottom:8px;display:inline-block;">
+            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" style="vertical-align:middle;"><ellipse cx="32" cy="40" rx="20" ry="12" fill="#d97706"/><circle cx="48" cy="32" r="10" fill="#d97706"/><ellipse cx="52" cy="36" rx="4" ry="3" fill="#271911"/><circle cx="50" cy="28" r="2" fill="#0f172a"/><ellipse cx="44" cy="24" rx="4" ry="6" fill="#92400e"/><ellipse cx="54" cy="40" rx="3" ry="6" fill="#f43f5e"/></svg>
+          </div>
+          <h3 style="font-size:28px;font-weight:800;color:#ea580c;margin-bottom:4px;font-family:'Fredoka',sans-serif;">Bị Đàn Chó Đè Lấy!</h3>
+          <p id="gameover-reason" style="font-size:14px;color:#475569;margin-bottom:16px;font-family:'Fredoka',sans-serif;">Bạn chưa vượt qua được thử thách chữ cái.</p>
+          
+          <div style="background:#fffbeb;border-radius:16px;padding:16px;margin-bottom:20px;text-align:left;border:1px solid #fde68a;font-size:14px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;color:#475569;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid #fef3c7;">
+              <span style="font-family:'Fredoka',sans-serif;">Chữ vừa gặp:</span><span id="fail-letter" class="handwriting" style="font-size:52px;font-weight:700;color:#15803d;">a</span>
+            </div>
+            <div style="color:#334155;font-family:'Fredoka',sans-serif;">
+              <span style="font-weight:600;color:#0f172a;">Cách đọc đúng: </span><span id="fail-answers" style="font-weight:700;color:#c2410c;">"a"</span>
+            </div>
+            <div style="color:#64748b;font-size:12px;margin-top:4px;font-family:'Fredoka',sans-serif;">
+              <span>Máy nghe được: </span><span id="fail-heard" style="font-style:italic;color:#dc2626;font-weight:500;">không nghe rõ</span>
+            </div>
+          </div>
+
+          <button id="restart-btn" style="width:100%;padding:16px;border-radius:12px;font-weight:700;font-size:18px;cursor:pointer;transition:all 0.15s;border:none;background:linear-gradient(135deg,#16a34a 0%,#15803d 100%);color:#fff;box-shadow:0 4px 14px rgba(22,163,74,0.4);display:inline-flex;align-items:center;justify-content:center;gap:8px;position:relative;z-index:50;font-family:'Fredoka',sans-serif;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            <span>CHƠI LẠI NGAY</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="feedback" style="position:absolute;top:33%;left:50%;transform:translateX(-50%);padding:16px 32px;border-radius:16px;font-weight:900;font-size:36px;display:none;z-index:50;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);text-align:center;pointer-events:none;text-shadow:0 2px 4px rgba(0,0,0,0.1);font-family:'Fredoka',sans-serif;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  var meta = document.createElement('meta');
+  meta.charset = 'UTF-8';
+  document.head.appendChild(meta);
+
+  var styleEl = document.createElement('style');
+  styleEl.textContent = `
+    @charset "UTF-8";
+    
+    :root { --bg: #f8fafc; --text: #0f172a; --accent: #16a34a; }
+    
+    .handwriting {
+      font-family: 'Mali', 'Comic Sans MS', 'Segoe Print', cursive, sans-serif;
+      font-weight: 700;
+    }
+    
+    .letter-card {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 12px;
+      margin: 4px;
+      border-radius: 12px;
+      background: rgba(22, 163, 74, 0.12);
+      border: 1.5px solid rgba(22, 163, 74, 0.3);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .letter-card .handwriting {
+      font-size: 30px;
+      line-height: 1.2;
+    }
+    .pronun {
+      color: #334155;
+      font-size: 13px;
+      font-weight: 500;
+      margin-left: 8px;
+      font-family: 'Fredoka', sans-serif;
+    }
+    
+    @keyframes pulseSoft { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+    .pulse { animation: pulseSoft 0.9s ease-in-out infinite; }
+    @keyframes tongueWag { 0%, 100% { transform: rotate(0deg) scale(1); } 25% { transform: rotate(-8deg) scale(1.15); } 75% { transform: rotate(8deg) scale(1.15); } }
+    .lick-anim { animation: tongueWag 0.3s ease-in-out infinite; transform-origin: center bottom; }
+    @keyframes dogPounce { 0% { transform: scale(0.6) translateY(40px); opacity: 0; } 50% { transform: scale(1.15) translateY(-10px); opacity: 1; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
+    .pounce-in { animation: dogPounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-8px) rotate(-1deg); } 40% { transform: translateX(8px) rotate(1deg); } 60% { transform: translateX(-6px); } 80% { transform: translateX(6px); } }
+    .shake { animation: shake 0.45s ease-in-out; }
+    @keyframes ping { 75%, 100% { transform: scale(2); opacity: 0; } }
+    
+    .slobber-drop {
+      position: absolute;
+      width: 14px;
+      height: 22px;
+      background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(186,230,253,0.85) 70%);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      pointer-events: none;
+      animation: dropFall 0.8s ease-in forwards;
+      z-index: 60;
+    }
+    @keyframes dropFall {
+      0% { opacity: 0; transform: translateY(-20px) scale(0.6); }
+      30% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(60px) scale(1.4); }
+    }
+    
+    .custom-scroll::-webkit-scrollbar { width: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+  `;
+  document.head.appendChild(styleEl);
+
+  var HANDWRITING_FONT = "bold 700 'Mali', 'Comic Sans MS', 'Segoe Print', cursive, sans-serif";
+  var HANDWRITING_FONT_FAMILY = "'Mali', 'Comic Sans MS', 'Segoe Print', cursive, sans-serif";
+
+  var LETTERS_STR = 'a_ă_â_b_c_d_đ_e_ê_g_h_i_k_l_m_n_o_ô_ơ_p_q_r_s_t_u_ư_v_x_y';
+  var LETTERS = [
+    { letter: 'a', names: ['a'], type: 'vowel', displayNames: 'a' },
+    { letter: 'ă', names: ['á', 'ă', 'a ngắn'], type: 'vowel', displayNames: 'á / ă' },
+    { letter: 'â', names: ['ớ', 'â', 'a nón'], type: 'vowel', displayNames: 'ớ / â' },
+    { letter: 'b', names: ['bờ', 'bê', 'b'], type: 'consonant', displayNames: 'bờ / bê' },
+    { letter: 'c', names: ['cờ', 'xê', 'c'], type: 'consonant', displayNames: 'cờ / xê' },
+    { letter: 'd', names: ['dờ', 'dê', 'd'], type: 'consonant', displayNames: 'dờ / dê' },
+    { letter: 'đ', names: ['đờ', 'đê', 'đ'], type: 'consonant', displayNames: 'đờ / đê' },
+    { letter: 'e', names: ['e'], type: 'vowel', displayNames: 'e' },
+    { letter: 'ê', names: ['ê'], type: 'vowel', displayNames: 'ê' },
+    { letter: 'g', names: ['gờ', 'giê', 'g'], type: 'consonant', displayNames: 'gờ / giê' },
+    { letter: 'h', names: ['hờ', 'hát', 'h'], type: 'consonant', displayNames: 'hờ / hát' },
+    { letter: 'i', names: ['i', 'i ngắn'], type: 'vowel', displayNames: 'i / i ngắn' },
+    { letter: 'k', names: ['ca', 'kờ', 'k'], type: 'consonant', displayNames: 'ca / kờ' },
+    { letter: 'l', names: ['lờ', 'e lờ', 'l'], type: 'consonant', displayNames: 'lờ / e-lờ' },
+    { letter: 'm', names: ['mờ', 'em mờ', 'm'], type: 'consonant', displayNames: 'mờ / em-mờ' },
+    { letter: 'n', names: ['nờ', 'en nờ', 'n'], type: 'consonant', displayNames: 'nờ / en-nờ' },
+    { letter: 'o', names: ['o'], type: 'vowel', displayNames: 'o' },
+    { letter: 'ô', names: ['ô', 'o nón'], type: 'vowel', displayNames: 'ô' },
+    { letter: 'ơ', names: ['ơ', 'o râu'], type: 'vowel', displayNames: 'ơ' },
+    { letter: 'p', names: ['pê', 'pờ', 'p'], type: 'consonant', displayNames: 'pê / pờ' },
+    { letter: 'q', names: ['quờ', 'quy', 'cu'], type: 'consonant', displayNames: 'quờ / quy' },
+    { letter: 'r', names: ['rờ', 'e rờ', 'r'], type: 'consonant', displayNames: 'rờ / e-rờ' },
+    { letter: 's', names: ['sờ', 'ét sì', 's'], type: 'consonant', displayNames: 'sờ / ét-sì' },
+    { letter: 't', names: ['tờ', 'tê', 't'], type: 'consonant', displayNames: 'tờ / tê' },
+    { letter: 'u', names: ['u'], type: 'vowel', displayNames: 'u' },
+    { letter: 'ư', names: ['ư', 'u móc'], type: 'vowel', displayNames: 'ư' },
+    { letter: 'v', names: ['vờ', 'vê', 'v'], type: 'consonant', displayNames: 'vờ / vê' },
+    { letter: 'x', names: ['xờ', 'ích xì', 'x'], type: 'consonant', displayNames: 'xờ / ích-xì' },
+    { letter: 'y', names: ['i dài', 'y dài', 'y'], type: 'vowel', displayNames: 'i dài / y dài' }
+  ];
+  var COMPOUNDS = [
+    { letter: 'ch', names: ['chờ'], displayNames: 'chờ' },
+    { letter: 'gh', names: ['gờ', 'gờ kép'], displayNames: 'gờ kép' },
+    { letter: 'gi', names: ['giờ'], displayNames: 'giờ' },
+    { letter: 'kh', names: ['khờ'], displayNames: 'khờ' },
+    { letter: 'ng', names: ['ngờ'], displayNames: 'ngờ' },
+    { letter: 'ngh', names: ['ngờ', 'ngờ kép'], displayNames: 'ngờ kép' },
+    { letter: 'nh', names: ['nhờ'], displayNames: 'nhờ' },
+    { letter: 'ph', names: ['phờ'], displayNames: 'phờ' },
+    { letter: 'qu', names: ['quờ'], displayNames: 'quờ' },
+    { letter: 'th', names: ['thờ'], displayNames: 'thờ' },
+    { letter: 'tr', names: ['trờ'], displayNames: 'trờ' }
+  ];
+
+  var lGuide = document.getElementById('letters-guide');
+  LETTERS.forEach(function(l){
+    var c = document.createElement('div');
+    c.className = 'letter-card';
+    c.innerHTML = '<span class="handwriting" style="color:#15803d;">' + l.letter + '</span><span class="pronun"> ' + l.displayNames + '</span>';
+    lGuide.appendChild(c);
+  });
+  var cGuide = document.getElementById('compounds-guide');
+  COMPOUNDS.forEach(function(c){
+    var d = document.createElement('div');
+    d.className = 'letter-card';
+    d.style.background = 'rgba(234, 88, 12, 0.12)';
+    d.style.borderColor = 'rgba(234, 88, 12, 0.3)';
+    d.innerHTML = '<span class="handwriting" style="color:#c2410c;">' + c.letter + '</span><span class="pronun"> ' + c.displayNames + '</span>';
+    cGuide.appendChild(d);
+  });
+
+  var audioContext = null, barkNoiseBuffer = null, lickNoiseBuffer = null;
+  function getAudioContext(){
+    if(!audioContext){
+      var AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if(AudioCtx) {
+        audioContext = new AudioCtx();
+        var bSize = Math.floor(audioContext.sampleRate * 0.14);
+        barkNoiseBuffer = audioContext.createBuffer(1, bSize, audioContext.sampleRate);
+        var bData = barkNoiseBuffer.getChannelData(0);
+        for(var i = 0; i < bSize; i++) bData[i] = (Math.random() * 2 - 1) * (1 - i / bSize);
+        var lSize = Math.floor(audioContext.sampleRate * 0.06);
+        lickNoiseBuffer = audioContext.createBuffer(1, lSize, audioContext.sampleRate);
+        var lData = lickNoiseBuffer.getChannelData(0);
+        for(var j = 0; j < lSize; j++) lData[j] = (Math.random() * 2 - 1) * Math.sin(Math.PI * j / lSize);
+      }
+    }
+    if(audioContext && audioContext.state === 'suspended') audioContext.resume().catch(function(){});
+    return audioContext;
+  }
+
+  function playDogBarkSound(){
+    var ctx = getAudioContext(); if(!ctx || !barkNoiseBuffer) return;
+    try {
+      var t = ctx.currentTime, osc = ctx.createOscillator(), oscGain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(320 + Math.random() * 80, t);
+      osc.frequency.exponentialRampToValueAtTime(140, t + 0.12);
+      oscGain.gain.setValueAtTime(0.01, t);
+      oscGain.gain.exponentialRampToValueAtTime(0.28, t + 0.02);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+      var noise = ctx.createBufferSource(); noise.buffer = barkNoiseBuffer;
+      var filter = ctx.createBiquadFilter(); filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(800, t);
+      filter.frequency.exponentialRampToValueAtTime(350, t + 0.12);
+      filter.Q.value = 2.5;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.01, t);
+      noiseGain.gain.exponentialRampToValueAtTime(0.35, t + 0.02);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+      osc.connect(oscGain); oscGain.connect(ctx.destination);
+      noise.connect(filter); filter.connect(noiseGain); noiseGain.connect(ctx.destination);
+      osc.start(t); osc.stop(t + 0.15); noise.start(t); noise.stop(t + 0.15);
+    } catch(e) {}
+  }
+
+  function playWetLickingSound(){
+    var ctx = getAudioContext(); if(!ctx || !lickNoiseBuffer) return;
+    try {
+      var t = ctx.currentTime, osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(650 + Math.random() * 120, t);
+      osc.frequency.exponentialRampToValueAtTime(220, t + 0.06);
+      gain.gain.setValueAtTime(0.01, t);
+      gain.gain.linearRampToValueAtTime(0.22, t + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+      var noise = ctx.createBufferSource(); noise.buffer = lickNoiseBuffer;
+      var hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 1800;
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.12, t);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+      osc.connect(gain); gain.connect(ctx.destination);
+      noise.connect(hp); hp.connect(noiseGain); noiseGain.connect(ctx.destination);
+      osc.start(t); osc.stop(t + 0.08); noise.start(t); noise.stop(t + 0.08);
+    } catch(e) {}
+  }
+
+  function playSuccessSound(){
+    var ctx = getAudioContext(); if(!ctx) return;
+    try {
+      var t = ctx.currentTime, osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(440, t);
+      osc.frequency.exponentialRampToValueAtTime(880, t + 0.15);
+      gain.gain.setValueAtTime(0.15, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(t); osc.stop(t + 0.25);
+    } catch(e) {}
+  }
+
+  var game = {
+    running: false, paused: false, score: 0, correctCount: 0, speed: 1, baseSpeed: 0.18,
+    distance: 0, dogDistance: 14.0, dogCatchDistance: 2.2,
+    currentObstacle: null, currentObstacleRef: null, obstacleActive: false,
+    listening: false, voiceReady: false, recognition: null, isLickingCutscene: false, cutsceneTime: 0,
+    lastHeardText: ''
+  };
+
+  var container = document.getElementById('canvas3d');
+  var scene, camera, renderer, player, obstacles = [], dogPackMeshes = [];
+  var clock = new THREE.Clock(), playerAnimTime = 0, isJumping = false, jumpVelocity = 0;
+  
+  var cameraOffset = new THREE.Vector3(4.5, 6, -22); 
+  
+  var DOG_FUR_COLORS = [0xd97706, 0x92400e, 0x451a03, 0xf59e0b, 0x78716c];
+
+  function createDogModel(colorIndex){
+    var group = new THREE.Group();
+    var furColor = DOG_FUR_COLORS[colorIndex % 5];
+    var furMat = new THREE.MeshStandardMaterial({ color: furColor, roughness: 0.8 });
+    var darkFurMat = new THREE.MeshStandardMaterial({ color: 0x271911, roughness: 0.9 });
+    
+    var body = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.42, 0.85), furMat);
+    body.position.set(0, 0.42, 0); body.castShadow = true; group.add(body);
+    
+    var headRoot = new THREE.Group();
+    headRoot.position.set(0, 0.58, 0.45); group.add(headRoot);
+    group.userData.headRoot = headRoot;
+    
+    var head = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.38, 0.44), furMat);
+    head.position.set(0, 0.12, 0.12); head.castShadow = true; headRoot.add(head);
+    
+    var snout = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.22, 0.32), darkFurMat);
+    snout.position.set(0, 0.06, 0.38); headRoot.add(snout);
+    
+    var tongue = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.05, 0.26),
+      new THREE.MeshStandardMaterial({ color: 0xf43f5e, emissive: 0x9f1239, emissiveIntensity: 0.2 }));
+    tongue.position.set(0, -0.04, 0.44); tongue.rotation.x = 0.2; headRoot.add(tongue);
+    group.userData.tongue = tongue;
+    
+    var tailRoot = new THREE.Group();
+    tailRoot.position.set(0, 0.52, -0.42); group.add(tailRoot);
+    group.userData.tailRoot = tailRoot;
+    
+    var tail = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.07, 0.45, 6), darkFurMat);
+    tail.position.set(0, 0.18, -0.15); tail.rotation.x = -0.7; tailRoot.add(tail);
+
+    var legGeo = new THREE.BoxGeometry(0.12, 0.38, 0.12);
+    var legPositions = [[-0.18, 0.19, 0.28], [0.18, 0.19, 0.28], [-0.18, 0.19, -0.28], [0.18, 0.19, -0.28]];
+    var legs = [];
+    for(var i = 0; i < 4; i++){
+      var leg = new THREE.Mesh(legGeo, darkFurMat);
+      leg.position.set(legPositions[i][0], legPositions[i][1], legPositions[i][2]);
+      leg.castShadow = true; group.add(leg); legs.push(leg);
+    }
+    group.userData.legs = legs;
+    var scale = 0.95 + (colorIndex % 3) * 0.1;
+    group.scale.set(scale, scale, scale);
+    return group;
+  }
+
+  function initThree(){
+    var w = container.clientWidth, h = container.clientHeight;
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x7dd3fc);
+    scene.fog = new THREE.Fog(0x7dd3fc, 25, 95);
+    
+    camera = new THREE.PerspectiveCamera(62, w/h, 0.1, 300);
+    
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(w, h);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    container.appendChild(renderer.domElement);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+    scene.add(new THREE.HemisphereLight(0xbae6fd, 0x84cc16, 0.45));
+    
+    var sun = new THREE.DirectionalLight(0xfffbeb, 1.1);
+    sun.position.set(16, 26, 12); sun.castShadow = true; scene.add(sun);
+
+    var road = new THREE.Mesh(new THREE.PlaneGeometry(8.5, 260),
+      new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.85 }));
+    road.rotation.x = -Math.PI/2; road.position.z = 60; road.receiveShadow = true; scene.add(road);
+    
+    var grass = new THREE.Mesh(new THREE.PlaneGeometry(220, 260),
+      new THREE.MeshStandardMaterial({ color: 0x65a30d, roughness: 0.95 }));
+    grass.rotation.x = -Math.PI/2; grass.position.set(0, -0.02, 60); grass.receiveShadow = true; scene.add(grass);
+
+    player = createCharacter(); player.position.set(0, 0, 0); scene.add(player);
+    
+    var dogOffsets = [
+      { x: -0.6, z: 0 }, { x: 0.6, z: 0.2 }, { x: -1.3, z: -0.8 },
+      { x: 1.3, z: -0.6 }, { x: 0, z: -1.4 }
+    ];
+    for(var d = 0; d < 5; d++){
+      var dog = createDogModel(d);
+      dog.userData.baseOffsetX = dogOffsets[d].x;
+      dog.userData.baseOffsetZ = dogOffsets[d].z;
+      dog.position.set(dogOffsets[d].x, 0, -game.dogDistance + dogOffsets[d].z);
+      scene.add(dog); dogPackMeshes.push(dog);
+    }
+    
+    window.addEventListener('resize', onResize);
+  }
+
+  function createCharacter(){
+    var group = new THREE.Group();
+    var skinMat = new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.6 });
+    var shirtMat = new THREE.MeshStandardMaterial({ color: 0x0284c7, roughness: 0.6 });
+    var pantsMat = new THREE.MeshStandardMaterial({ color: 0x1e3a8a, roughness: 0.7 });
+    var shoeMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.8 });
+    var hairMat = new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.9 });
+
+    var body = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.8, 0.38), shirtMat);
+    body.position.y = 1.25; body.castShadow = true; group.add(body);
+    group.userData.body = body;
+    
+    var headRoot = new THREE.Group();
+    headRoot.position.set(0, 1.95, 0); group.add(headRoot);
+    group.userData.headRoot = headRoot;
+    
+    var head = new THREE.Mesh(new THREE.SphereGeometry(0.3, 24, 20), skinMat);
+    head.castShadow = true; headRoot.add(head);
+    
+    var hair = new THREE.Mesh(new THREE.SphereGeometry(0.32, 20, 16, 0, Math.PI * 2, 0, Math.PI / 2), hairMat);
+    hair.position.y = 0.05; headRoot.add(hair);
+    
+    var eyeMat = new THREE.MeshStandardMaterial({ color: 0x0f172a });
+    var eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), eyeMat);
+    eyeL.position.set(-0.1, 0.02, 0.27); headRoot.add(eyeL);
+    var eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), eyeMat);
+    eyeR.position.set(0.1, 0.02, 0.27); headRoot.add(eyeR);
+
+    var legGeo = new THREE.BoxGeometry(0.2, 0.62, 0.2);
+    var legL = new THREE.Mesh(legGeo, pantsMat);
+    legL.position.set(-0.16, 0.55, 0); legL.castShadow = true; group.add(legL);
+    group.userData.legL = legL;
+    var legR = new THREE.Mesh(legGeo, pantsMat);
+    legR.position.set(0.16, 0.55, 0); legR.castShadow = true; group.add(legR);
+    group.userData.legR = legR;
+    
+    var shoeGeo = new THREE.BoxGeometry(0.24, 0.12, 0.3);
+    var shoeL = new THREE.Mesh(shoeGeo, shoeMat);
+    shoeL.position.set(-0.16, 0.1, 0.04); group.add(shoeL);
+    group.userData.shoeL = shoeL;
+    var shoeR = new THREE.Mesh(shoeGeo, shoeMat);
+    shoeR.position.set(0.16, 0.1, 0.04); group.add(shoeR);
+    group.userData.shoeR = shoeR;
+
+    var armGeo = new THREE.BoxGeometry(0.15, 0.52, 0.15);
+    var armL = new THREE.Mesh(armGeo, shirtMat);
+    armL.position.set(-0.44, 1.32, 0); armL.castShadow = true; group.add(armL);
+    group.userData.armL = armL;
+    var armR = new THREE.Mesh(armGeo, shirtMat);
+    armR.position.set(0.44, 1.32, 0); armR.castShadow = true; group.add(armR);
+    group.userData.armR = armR;
+
+    return group;
+  }
+
+  function createLetterTexture(letter){
+    var canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    var ctx = canvas.getContext('2d');
+    
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(256, 256, 230, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.lineWidth = 18;
+    ctx.strokeStyle = '#16a34a';
+    ctx.stroke();
+    
+    ctx.fillStyle = '#15803d';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    ctx.font = '700 300px ' + HANDWRITING_FONT_FAMILY;
+    
+    var metrics = ctx.measureText(letter);
+    var textWidth = metrics.width;
+    
+    if(textWidth > 420){
+      var scale = 420 / textWidth;
+      ctx.font = '700 ' + Math.floor(300 * scale) + 'px ' + HANDWRITING_FONT_FAMILY;
+    }
+    
+    ctx.fillText(letter, 256, 265);
+    
+    var texture = new THREE.CanvasTexture(canvas);
+    texture.needsUpdate = true;
+    texture.anisotropy = 8;
+    return texture;
+  }
+
+  function createObstacleMesh(letterData, zPos){
+    var group = new THREE.Group();
+    
+    var barrier = new THREE.Mesh(new THREE.BoxGeometry(3.0, 1.4, 0.5),
+      new THREE.MeshStandardMaterial({ color: 0xb45309 }));
+    barrier.position.y = 0.7;
+    barrier.castShadow = true;
+    group.add(barrier);
+    
+    var texture = createLetterTexture(letterData.letter);
+    
+    var badge = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 1.6),
+      new THREE.MeshStandardMaterial({ map: texture, transparent: true }));
+    badge.position.set(0, 2.1, 0);
+    group.add(badge);
+    
+    group.position.set(0, 0, zPos);
+    group.userData.letterData = letterData;
+    group.userData.texture = texture;
+    
+    return group;
+  }
+
+  function onResize(){
+    if(!container || !renderer || !camera) return;
+    var w = container.clientWidth, h = container.clientHeight;
+    camera.aspect = w/h; camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  }
+
+  function initSpeech(){
+    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SpeechRecognition){
+      var status = document.getElementById('voice-status');
+      status.innerHTML = '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#dc2626;"></span><span>Không hỗ trợ</span>';
+      status.style.background = '#fee2e2';
+      status.style.color = '#b91c1c';
+      status.style.borderColor = '#fecaca';
+      return false;
+    }
+    game.recognition = new SpeechRecognition();
+    game.recognition.lang = 'vi-VN';
+    game.recognition.continuous = true;
+    game.recognition.interimResults = true;
+    game.recognition.maxAlternatives = 8;
+    
+    game.recognition.onstart = function(){
+      game.listening = true;
+      document.getElementById('voice-status').innerHTML =
+        '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#22c55e;animation:ping 1s cubic-bezier(0,0,0.2,1) infinite;"></span><span>Đang nghe...</span>';
+    };
+    
+    game.recognition.onresult = function(event){
+      if(!event.results || event.results.length === 0) return;
+      var phrases = [];
+      var lastResult = event.results[event.results.length - 1];
+      
+      for(var a = 0; a < lastResult.length; a++){
+        var transcript = lastResult[a].transcript;
+        phrases.push(transcript);
+        if(transcript && transcript.trim()) game.lastHeardText = transcript.trim();
+      }
+      
+      var words = game.lastHeardText.split(/\s+/);
+      phrases = phrases.concat(words);
+      
+      checkSpeechMatches(phrases);
+    };
+    
+    game.recognition.onend = function(){
+      game.listening = false;
+      document.getElementById('voice-status').innerHTML =
+        '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#94a3b8;"></span><span>Mic chờ</span>';
+      if(game.running && !game.paused && !game.isLickingCutscene) {
+        try { game.recognition.start(); } catch(e){}
+      }
+    };
+    
+    game.recognition.onerror = function(){
+      game.listening = false;
+      if(game.running && !game.paused && !game.isLickingCutscene) {
+        setTimeout(function(){ try { game.recognition.start(); } catch(e){} }, 500);
+      }
+    };
+    
+    game.voiceReady = true;
+    document.getElementById('mic-btn').disabled = false;
+    return true;
+  }
+
+  function startListening(){
+    if(game.voiceReady && game.running && !game.listening && !game.paused) {
+      try { game.recognition.start(); } catch(e){}
+    }
+  }
+
+  function cleanSpokenText(str){
+    if(!str) return '';
+    return str.toLowerCase().trim()
+      .replace(/^(chữ cái|chữ|phụ âm|nguyên âm|âm|đọc là|là|tiếng|từ)\s+/g, '')
+      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"'']/g, '').trim();
+  }
+
+  function checkSpeechMatches(phrases){
+    if(!game.obstacleActive || !game.currentObstacle || game.isLickingCutscene) return;
+    var current = game.currentObstacle;
+    var target = current.letter.toLowerCase();
+    var validNames = current.names.map(cleanSpokenText);
+    var matched = false;
+    
+    for(var i = 0; i < phrases.length; i++){
+      var cleaned = cleanSpokenText(phrases[i]);
+      if(!cleaned) continue;
+      if(cleaned === target) { matched = true; break; }
+      for(var v = 0; v < validNames.length; v++){
+        if(cleaned === validNames[v] || cleaned.includes(validNames[v]) || validNames[v].includes(cleaned)){
+          matched = true; break;
+        }
+      }
+      if(matched) break;
+    }
+    if(matched) onCorrectObstacle();
+  }
+
+  function onCorrectObstacle(){
+    game.score += 10;
+    game.correctCount += 1;
+    game.speed = Math.min(2.2, game.speed + 0.04);
+    game.dogDistance = Math.min(18.0, game.dogDistance + 1.6);
+    updateHUD();
+    playSuccessSound();
+    showFeedback('+10 ĐÚNG!', '#16a34a', 'rgba(255,255,255,0.95)');
+    hideLetterOverlay();
+    game.obstacleActive = false;
+    
+    if (game.currentObstacleRef) {
+      game.currentObstacleRef.userData.cleared = true;
+    }
+    
+    if(!isJumping){
+      isJumping = true;
+      jumpVelocity = 0.32;
+    }
+  }
+
+  function onFailedObstacle(reason, heardText){
+    if(game.isLickingCutscene) return;
+    game.obstacleActive = false;
+    hideLetterOverlay();
+    game.isLickingCutscene = true;
+    game.cutsceneTime = 0;
+    
+    cameraOffset.set(2, 3, -6);
+    
+    var currentObs = game.currentObstacle || LETTERS[0];
+    document.getElementById('fail-letter').textContent = currentObs.letter;
+    document.getElementById('fail-answers').textContent = currentObs.displayNames || currentObs.names.join(' / ');
+    document.getElementById('fail-heard').textContent = heardText ? '"' + heardText + '"' : '(quá chậm / va chạm)';
+    document.getElementById('gameover-reason').textContent = reason || 'Đàn chó đã bắt kịp và đè bạn xuống liếm mặt!';
+
+    playDogBarkSound();
+    setTimeout(playDogBarkSound, 160);
+    
+    player.rotation.x = -Math.PI / 2;
+    player.position.y = 0.3;
+    
+    dogPackMeshes.forEach(function(dog, idx){
+      var angle = (idx / dogPackMeshes.length) * Math.PI * 2;
+      dog.position.set(
+        player.position.x + Math.cos(angle) * (0.45 + idx * 0.08),
+        0.35 + (idx % 2) * 0.15,
+        player.position.z + Math.sin(angle) * (0.45 + idx * 0.08)
+      );
+      dog.lookAt(player.position.x, 0.4, player.position.z);
+    });
+
+    var containerEl = document.getElementById('game-container');
+    containerEl.classList.add('shake');
+    setTimeout(function(){ containerEl.classList.remove('shake'); }, 450);
+    
+    var dropInterval = setInterval(function(){
+      if(!game.isLickingCutscene) return clearInterval(dropInterval);
+      var drop = document.createElement('div');
+      drop.className = 'slobber-drop';
+      drop.style.left = (20 + Math.random() * 60) + '%';
+      drop.style.top = (25 + Math.random() * 50) + '%';
+      containerEl.appendChild(drop);
+      setTimeout(function(){ drop.remove(); }, 1200);
+    }, 200);
+
+    var lickInterval = setInterval(function(){
+      if(!game.isLickingCutscene) { clearInterval(lickInterval); return; }
+      playWetLickingSound();
+    }, 180);
+    
+    setTimeout(function(){
+      clearInterval(lickInterval);
+      clearInterval(dropInterval);
+      endGameAndShowModal();
+    }, 2400);
+  }
+
+  function endGameAndShowModal(){
+    game.running = false;
+    game.isLickingCutscene = false;
+    document.getElementById('gameover-screen').style.display = 'flex';
+    try { game.recognition.stop(); } catch(e){}
+  }
+
+  function showFeedback(text, color, bg){
+    var fb = document.getElementById('feedback');
+    fb.textContent = text;
+    fb.style.color = color;
+    fb.style.background = bg;
+    fb.style.display = 'block';
+    setTimeout(function(){ fb.style.display = 'none'; }, 1300);
+  }
+  
+  function showLetterOverlay(letterData){
+    document.getElementById('current-letter').textContent = letterData.letter.toLowerCase();
+    document.getElementById('letter-hint').textContent = letterData.displayNames || letterData.names[0];
+    document.getElementById('letter-overlay').style.display = 'block';
+  }
+  
+  function hideLetterOverlay(){
+    document.getElementById('letter-overlay').style.display = 'none';
+  }
+
+  function updateHUD(){
+    document.getElementById('score').textContent = game.score;
+    document.getElementById('dog-dist-val').textContent =
+      Math.max(0, game.dogDistance - game.dogCatchDistance).toFixed(1) + 'm';
+    document.getElementById('speed').textContent = game.speed.toFixed(1) + 'x';
+    document.getElementById('danger-indicator').style.display =
+      game.dogDistance < 6.5 ? 'flex' : 'none';
+  }
+
+  function spawnObstacle(){
+    var zPos = 70;
+    var pool = Math.random() < 0.65 ? LETTERS : COMPOUNDS;
+    var letterData = pool[Math.floor(Math.random() * pool.length)];
+    var obstacle = createObstacleMesh(letterData, zPos);
+    obstacle.userData.letterShown = false;
+    obstacle.userData.passed = false;
+    obstacle.userData.cleared = false;
+    obstacle.userData.jumpTriggered = false;
+    obstacles.push(obstacle);
+    scene.add(obstacle);
+  }
+
+  function updateCamera(){
+    camera.position.x += (player.position.x + cameraOffset.x - camera.position.x) * 0.1;
+    camera.position.y += (player.position.y + cameraOffset.y - camera.position.y) * 0.1;
+    camera.position.z += (player.position.z + cameraOffset.z - camera.position.z) * 0.1;
+    camera.lookAt(new THREE.Vector3(player.position.x - 0.5, player.position.y + 1.5, player.position.z + 10));
+  }
+
+  function animate(){
+    requestAnimationFrame(animate);
+    var delta = clock.getDelta();
+
+    if(game.isLickingCutscene){
+      game.cutsceneTime += delta;
+      dogPackMeshes.forEach(function(dog, i){
+        if(dog.userData.tailRoot)
+          dog.userData.tailRoot.rotation.y = Math.sin(game.cutsceneTime * 28 + i) * 0.6;
+        if(dog.userData.tongue)
+          dog.userData.tongue.scale.z = 1 + Math.sin(game.cutsceneTime * 20 + i) * 0.35;
+        if(dog.userData.headRoot)
+          dog.userData.headRoot.rotation.x = 0.3 + Math.sin(game.cutsceneTime * 14 + i) * 0.18;
+      });
+      updateCamera();
+      renderer.render(scene, camera);
+      return;
+    }
+
+    if(!game.running || game.paused){
+      renderer.render(scene, camera);
+      return;
+    }
+
+    var moveSpeed = game.baseSpeed * game.speed;
+    playerAnimTime += delta * 12 * game.speed;
+
+    if(player.userData.legL){
+      player.userData.legL.rotation.x = Math.sin(playerAnimTime) * 0.7;
+      player.userData.legR.rotation.x = -Math.sin(playerAnimTime) * 0.7;
+      player.userData.armL.rotation.x = -Math.sin(playerAnimTime) * 0.6;
+      player.userData.armR.rotation.x = Math.sin(playerAnimTime) * 0.6;
+    }
+
+    if(isJumping){
+      player.position.y += jumpVelocity;
+      jumpVelocity -= 0.019;
+      if(player.position.y <= 0){
+        player.position.y = 0;
+        isJumping = false;
+        jumpVelocity = 0;
+      }
+    }
+
+    game.distance += moveSpeed;
+    game.dogDistance -= 0.0035 * game.speed;
+
+    dogPackMeshes.forEach(function(dog, idx){
+      dog.position.z += (player.position.z - game.dogDistance + dog.userData.baseOffsetZ - dog.position.z) * 0.1;
+      dog.position.x = player.position.x + dog.userData.baseOffsetX;
+      if(dog.userData.legs){
+        var legSwing = Math.sin(playerAnimTime * 1.3 + idx);
+        dog.userData.legs[0].rotation.x = legSwing * 0.6;
+        dog.userData.legs[1].rotation.x = -legSwing * 0.6;
+        dog.userData.legs[2].rotation.x = -legSwing * 0.6;
+        dog.userData.legs[3].rotation.x = legSwing * 0.6;
+      }
+      if(dog.userData.tailRoot)
+        dog.userData.tailRoot.rotation.y = Math.sin(playerAnimTime * 2 + idx) * 0.45;
+    });
+
+    for(var i = obstacles.length - 1; i >= 0; i--){
+      var obs = obstacles[i];
+      obs.position.z -= moveSpeed;
+      
+      if(!obs.userData.letterShown && obs.position.z < 55 && obs.position.z > 24){
+        obs.userData.letterShown = true;
+        game.currentObstacle = obs.userData.letterData;
+        game.currentObstacleRef = obs;
+        game.obstacleActive = true;
+        game.lastHeardText = '';
+        showLetterOverlay(obs.userData.letterData);
+        startListening();
+      }
+
+      if(obs.userData.cleared && !obs.userData.jumpTriggered && obs.position.z < 7.5){
+        obs.userData.jumpTriggered = true;
+        if(!isJumping){ isJumping = true; jumpVelocity = 0.28; }
+      }
+
+      if(!obs.userData.passed && !obs.userData.cleared && obs.position.z < 2.5 && obs.position.z > -1.2){
+        if(player.position.y < 1.1){
+          obs.userData.passed = true;
+          onFailedObstacle('Va phải chướng ngại vật!', game.lastHeardText);
+        }
+      }
+      if(obs.position.z < -8){
+        obs.userData.passed = true;
+        scene.remove(obs);
+        obstacles.splice(i, 1);
+      }
+    }
+
+    if(obstacles.length === 0 || obstacles[obstacles.length - 1].position.z < 10) spawnObstacle();
+    if(game.dogDistance <= game.dogCatchDistance)
+      onFailedObstacle('Đàn chó đã bắt kịp bạn!', game.lastHeardText);
+
+    updateCamera();
+    updateHUD();
+    renderer.render(scene, camera);
+  }
+
+  function startGame(){
+    getAudioContext();
+    game.running = true;
+    game.paused = false;
+    game.isLickingCutscene = false;
+    game.score = 0;
+    game.correctCount = 0;
+    game.speed = 1.0;
+    game.distance = 0;
+    game.dogDistance = 14.0;
+    game.obstacleActive = false;
+    game.lastHeardText = '';
+    
+    cameraOffset.set(4.5, 6, -22);
+
+    obstacles.forEach(function(o){ scene.remove(o); });
+    obstacles = [];
+    player.position.set(0, 0, 0);
+    player.rotation.set(0, 0, 0);
+    
+    dogPackMeshes.forEach(function(dog){
+      dog.position.set(dog.userData.baseOffsetX, 0, -game.dogDistance + dog.userData.baseOffsetZ);
+      dog.rotation.set(0, 0, 0);
+    });
+    
+    updateHUD();
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('gameover-screen').style.display = 'none';
+    document.getElementById('settings-modal').style.display = 'none';
+    document.getElementById('resume-btn').style.display = 'inline-flex';
+    
+    if(!game.voiceReady) initSpeech();
+    startListening();
+  }
+
+  var settingsModal = document.getElementById('settings-modal');
+  function openSettings() {
+    if (game.running && !game.isLickingCutscene) {
+      game.paused = true;
+      try { game.recognition.stop(); } catch(e){}
+    }
+    settingsModal.style.display = 'flex';
+  }
+  function closeSettings() {
+    settingsModal.style.display = 'none';
+    if (game.running && !game.isLickingCutscene) {
+      game.paused = false;
+      startListening();
+    }
+  }
+
+  document.getElementById('start-btn').addEventListener('click', startGame);
+  document.getElementById('restart-btn').addEventListener('click', startGame);
+  document.getElementById('settings-btn').addEventListener('click', openSettings);
+  document.getElementById('close-settings-btn').addEventListener('click', closeSettings);
+  document.getElementById('resume-btn').addEventListener('click', closeSettings);
+  
+  document.getElementById('mic-btn').addEventListener('click', function(){
+    getAudioContext();
+    if(!game.voiceReady) initSpeech();
+    this.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Đã kiểm tra Micro</span>';
+    this.style.background = 'linear-gradient(135deg,#16a34a 0%,#15803d 100%)';
+    this.style.color = '#fff';
+    this.style.border = 'none';
+  });
+  
+  document.addEventListener('keydown', function(e){
+    if(e.code === 'Space' && game.running && !game.paused && !game.isLickingCutscene){
+      e.preventDefault();
+      if(!isJumping){ isJumping = true; jumpVelocity = 0.28; }
+    }
+    if(e.code === 'KeyP') {
+      if(settingsModal.style.display === 'flex') closeSettings();
+      else openSettings();
+    }
+  });
+
+  function loadFontAndStart(){
+    if(document.fonts && document.fonts.load){
+      document.fonts.load('700 32px ' + HANDWRITING_FONT_FAMILY).then(function(){
+        initThree();
+        animate();
+      }).catch(function(){
+        setTimeout(function(){
+          initThree();
+          animate();
+        }, 1000);
+      });
+    } else if(document.fonts && document.fonts.ready){
+      document.fonts.ready.then(function(){
+        initThree();
+        animate();
+      }).catch(function(){
+        setTimeout(function(){
+          initThree();
+          animate();
+        }, 1000);
+      });
+    } else {
+      setTimeout(function(){
+        initThree();
+        animate();
+      }, 1500);
+    }
+  }
+
+  loadFontAndStart();
+})();
+</script>
+</html>
