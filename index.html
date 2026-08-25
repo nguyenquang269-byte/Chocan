@@ -18,12 +18,15 @@
         <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.9);backdrop-filter:blur(8px);border:1px solid #e2e8f0;padding:8px 16px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
           <div><span style="font-size:10px;color:#64748b;display:block;text-transform:uppercase;font-weight:700;line-height:1;">Điểm</span><span id="score" style="font-weight:900;font-size:20px;color:#16a34a;">0</span></div>
           <div style="height:24px;width:1px;background:#cbd5e1;"></div>
-          <div><span style="font-size:10px;color:#64748b;display:block;text-transform:uppercase;font-weight:700;line-height:1;">Chó cách</span><span id="dog-dist-val" style="font-weight:900;font-size:18px;color:#ea580c;">14.0m</span></div>
+          <div><span style="font-size:10px;color:#64748b;display:block;text-transform:uppercase;font-weight:700;line-height:1;">Chó cách</span><span id="dog-dist-val" style="font-weight:900;font-size:18px;color:#ea580c;">16.0m</span></div>
           <div style="height:24px;width:1px;background:#cbd5e1;"></div>
           <div><span style="font-size:10px;color:#64748b;display:block;text-transform:uppercase;font-weight:700;line-height:1;">Tốc độ</span><span id="speed" style="font-weight:900;font-size:18px;color:#d97706;">1.0x</span></div>
         </div>
         <div id="voice-status" style="width:max-content;font-size:12px;padding:6px 12px;border-radius:8px;font-weight:600;background:rgba(255,255,255,0.8);border:1px solid #e2e8f0;display:flex;align-items:center;gap:8px;">
           <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#94a3b8;"></span><span>Mic chờ</span>
+        </div>
+        <div id="bounce-indicator" style="width:max-content;font-size:12px;padding:4px 10px;border-radius:6px;font-weight:700;background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.4);color:#b45309;display:none;font-family:'Fredoka',sans-serif;">
+          Lượt: <span id="bounce-count">3</span>/3
         </div>
       </div>
 
@@ -49,8 +52,11 @@
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#e0f2fe" stroke-width="2.5" stroke-linecap="round" style="display:inline-block;vertical-align:middle;"><path d="M3 12c3-6 15-6 18 0"/><path d="M3 17c3-6 15-6 18 0"/><path d="M3 7c3-6 15-6 18 0"/></svg>
         </div>
         <h2 class="handwriting" style="font-size:56px;color:#4ade80;font-weight:700;margin-bottom:12px;text-shadow:0 4px 12px rgba(0,0,0,0.3);line-height:1.1;">Chạy Nhanh<br>Học Chữ!</h2>
-        <p style="color:#e2e8f0;max-width:400px;font-size:14px;line-height:1.6;margin-bottom:32px;font-family:'Fredoka',sans-serif;">
-          Đàn chó đang đuổi theo! Khi gặp chướng ngại vật, <strong>đọc to chữ</strong> ngay lập tức. Nhân vật sẽ tự động <strong>nhảy vượt qua</strong> đúng lúc chướng ngại vật đến gần!
+        <p style="color:#e2e8f0;max-width:420px;font-size:14px;line-height:1.6;margin-bottom:20px;font-family:'Fredoka',sans-serif;">
+          Đàn chó đang đuổi theo! Khi gặp chướng ngại vật, <strong>đọc to chữ</strong> ngay lập tức.
+        </p>
+        <p style="color:#fcd34d;max-width:420px;font-size:13px;line-height:1.5;margin-bottom:24px;font-family:'Fredoka',sans-serif;background:rgba(251,191,36,0.1);padding:10px 16px;border-radius:10px;border:1px solid rgba(251,191,36,0.25);">
+          <strong>Gợi ý:</strong> Bạn có <strong>3 lượt</strong> cho mỗi chữ. Nếu chưa đọc đúng, nhân vật sẽ bị dội lại để bạn có thêm thời gian!
         </p>
         <button id="start-btn" style="padding:16px 48px;border-radius:16px;font-weight:700;font-size:20px;cursor:pointer;transition:all 0.15s;border:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#16a34a 0%,#15803d 100%);color:#fff;box-shadow:0 10px 30px rgba(22,163,74,0.4);font-family:'Fredoka',sans-serif;">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><polygon points="5,3 19,12 5,21"/></svg>
@@ -80,6 +86,7 @@
               <ul style="list-style:disc;list-style-position:inside;gap:4px;display:flex;flex-direction:column;font-size:14px;color:#475569;font-family:'Fredoka',sans-serif;">
                 <li>Cho phép dùng Micro khi trình duyệt hỏi.</li>
                 <li><strong>Đọc to ngay</strong> khi thấy chữ xuất hiện (VD: đọc 'bờ' hoặc 'bê' cho chữ 'b').</li>
+                <li>Bạn có <strong>3 lượt</strong> cho mỗi chữ. Nếu chưa đọc đúng, nhân vật sẽ bị dội lại để bạn có thêm thời gian.</li>
                 <li>Nhân vật sẽ tự động <strong>nhảy vượt qua</strong> đúng lúc chướng ngại vật đến gần!</li>
                 <li>Phím <kbd style="padding:2px 6px;background:#e2e8f0;border-radius:4px;font-family:monospace;font-size:12px;">Space</kbd> nhảy thủ công, <kbd style="padding:2px 6px;background:#e2e8f0;border-radius:4px;font-family:monospace;font-size:12px;">P</kbd> tạm dừng.</li>
               </ul>
@@ -192,17 +199,20 @@
     .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
     .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     
-    @keyframes fadeOut {
-      from { opacity: 1; }
-      to { opacity: 0.3; }
+    @keyframes bounceBack {
+      0% { transform: translateX(0); }
+      30% { transform: translateX(-8px); }
+      60% { transform: translateX(4px); }
+      100% { transform: translateX(0); }
     }
-    .obstacle-cleared {
-      animation: fadeOut 0.3s ease-out forwards;
+    .bounce-effect {
+      animation: bounceBack 0.4s ease-out;
     }
   `;
   document.head.appendChild(styleEl);
 
   var HANDWRITING_FONT_FAMILY = "'Mali', 'Comic Sans MS', 'Segoe Print', cursive, sans-serif";
+  var MAX_BOUNCES = 3;
 
   var LETTERS = [
     { letter: 'a', names: ['a'], type: 'vowel', displayNames: 'a' },
@@ -346,12 +356,27 @@
     } catch(e) {}
   }
 
+  function playBounceSound(){
+    var ctx = getAudioContext(); if(!ctx) return;
+    try {
+      var t = ctx.currentTime, osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(220, t);
+      osc.frequency.exponentialRampToValueAtTime(110, t + 0.15);
+      gain.gain.setValueAtTime(0.08, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(t); osc.stop(t + 0.18);
+    } catch(e) {}
+  }
+
   var game = {
     running: false, paused: false, score: 0, correctCount: 0, speed: 1, baseSpeed: 0.16,
     distance: 0, dogDistance: 16.0, dogCatchDistance: 2.2,
     currentObstacle: null, currentObstacleRef: null, obstacleActive: false,
     listening: false, voiceReady: false, recognition: null, isLickingCutscene: false, cutsceneTime: 0,
-    lastHeardText: '', shouldRestartRecognition: false
+    lastHeardText: '', shouldRestartRecognition: false,
+    bounceCount: 0, isBouncing: false, bouncePushBack: 0
   };
 
   var container = document.getElementById('canvas3d');
@@ -689,12 +714,25 @@
     return matched;
   }
 
+  function updateBounceIndicator(){
+    var indicator = document.getElementById('bounce-indicator');
+    var countEl = document.getElementById('bounce-count');
+    if(game.obstacleActive && game.bounceCount > 0){
+      indicator.style.display = 'block';
+      countEl.textContent = (MAX_BOUNCES - game.bounceCount);
+    } else {
+      indicator.style.display = 'none';
+    }
+  }
+
   function onCorrectObstacle(){
     game.score += 10;
     game.correctCount += 1;
     game.speed = Math.min(2.2, game.speed + 0.04);
     game.dogDistance = Math.min(20.0, game.dogDistance + 1.8);
+    game.bounceCount = 0;
     updateHUD();
+    updateBounceIndicator();
     playSuccessSound();
     showFeedback('+10 ĐÚNG!', '#16a34a', 'rgba(255,255,255,0.95)');
     hideLetterOverlay();
@@ -716,9 +754,46 @@
     stopListening();
   }
 
+  function triggerBounce(){
+    if(game.isBouncing) return;
+    
+    game.bounceCount++;
+    var remaining = MAX_BOUNCES - game.bounceCount;
+    
+    playBounceSound();
+    
+    game.isBouncing = true;
+    game.bouncePushBack = 3.5;
+    
+    game.dogDistance = Math.max(2.5, game.dogDistance - 1.8);
+    
+    updateBounceIndicator();
+    
+    if(remaining > 0){
+      showFeedback('CÒN ' + remaining + ' LƯỢT!', '#d97706', 'rgba(255,255,255,0.95)');
+    }
+    
+    var containerEl = document.getElementById('game-container');
+    containerEl.classList.add('bounce-effect');
+    setTimeout(function(){ containerEl.classList.remove('bounce-effect'); }, 400);
+    
+    setTimeout(function(){
+      game.isBouncing = false;
+    }, 300);
+    
+    if(game.bounceCount >= MAX_BOUNCES){
+      onFailedObstacle('Đã hết 3 lượt! Đọc chưa đúng chữ cái.', game.lastHeardText);
+      return true;
+    }
+    
+    return false;
+  }
+
   function onFailedObstacle(reason, heardText){
     if(game.isLickingCutscene) return;
     game.obstacleActive = false;
+    game.bounceCount = 0;
+    updateBounceIndicator();
     hideLetterOverlay();
     game.isLickingCutscene = true;
     game.cutsceneTime = 0;
@@ -818,6 +893,7 @@
     obstacle.userData.passed = false;
     obstacle.userData.cleared = false;
     obstacle.userData.jumpTriggered = false;
+    obstacle.userData.bounceCount = 0;
     obstacles.push(obstacle);
     scene.add(obstacle);
   }
@@ -873,6 +949,13 @@
       }
     }
 
+    if(game.bouncePushBack > 0){
+      var pushAmount = Math.min(game.bouncePushBack, moveSpeed * 2.5);
+      player.position.z -= pushAmount;
+      game.bouncePushBack -= pushAmount;
+      if(game.bouncePushBack < 0.01) game.bouncePushBack = 0;
+    }
+
     game.distance += moveSpeed;
     game.dogDistance -= 0.0035 * game.speed;
 
@@ -899,8 +982,10 @@
         game.currentObstacle = obs.userData.letterData;
         game.currentObstacleRef = obs;
         game.obstacleActive = true;
+        game.bounceCount = 0;
         game.lastHeardText = '';
         showLetterOverlay(obs.userData.letterData);
+        updateBounceIndicator();
         startListening();
       }
 
@@ -912,17 +997,30 @@
         }
       }
 
-      if(!obs.userData.passed && !obs.userData.cleared && obs.position.z < 2.5 && obs.position.z > -1.2){
-        if(player.position.y < 1.1){
-          obs.userData.passed = true;
-          onFailedObstacle('Va phải chướng ngại vật!', game.lastHeardText);
+      if(!obs.userData.passed && !obs.userData.cleared && obs.position.z < 4.0 && obs.position.z > 1.0){
+        if(player.position.y < 1.1 && !game.isBouncing){
+          var isGameOver = triggerBounce();
+          if(isGameOver){
+            obs.userData.passed = true;
+          } else {
+            obs.position.z += 3.5;
+            obs.userData.letterShown = false;
+            setTimeout(function(){
+              if(game.running && game.obstacleActive){
+                startListening();
+              }
+            }, 350);
+          }
         }
       }
       
       if(!obs.userData.passed && obs.position.z < -1.2){
         obs.userData.passed = true;
-        if(!obs.userData.cleared){
+        if(!obs.userData.cleared && game.obstacleActive){
           onFailedObstacle('Đã vượt qua chướng ngại vật mà chưa đọc đúng!', game.lastHeardText);
+        } else {
+          game.bounceCount = 0;
+          updateBounceIndicator();
         }
       }
       
@@ -953,8 +1051,12 @@
     game.dogDistance = 16.0;
     game.obstacleActive = false;
     game.lastHeardText = '';
+    game.bounceCount = 0;
+    game.isBouncing = false;
+    game.bouncePushBack = 0;
     
     cameraOffset.set(4.5, 6, -22);
+    updateBounceIndicator();
 
     obstacles.forEach(function(o){ scene.remove(o); });
     obstacles = [];
